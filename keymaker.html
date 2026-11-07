@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Key Maker (offline) – HDT tools</title>
+<style>
+:root{--bg:#f3f4f2;--panel:#fff;--ink:#1d2321;--muted:#5d6763;--line:#d6dbd8;--accent:#0f5f6e;--soft:#e1eef0;--bad:#b3261e;--ok:#1f8a4c}
+@media (prefers-color-scheme:dark){:root{--bg:#141817;--panel:#1c2120;--ink:#e7ebe9;--muted:#9aa5a1;--line:#2f3735;--accent:#5fb7c6;--soft:#1d3337;--bad:#ff8a80;--ok:#4cc27e;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+main{max-width:560px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-left,0px)) 48px max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:26px;margin:0}
+h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:26px 0 8px}
+p{margin:4px 0}.muted{color:var(--muted);font-size:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px;margin-top:14px}
+label{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
+input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;width:100%}
+#dev{font-family:ui-monospace,Menlo,Consolas,monospace;text-transform:uppercase}
+textarea{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button,a.btn{font:600 16px/1 inherit;min-height:46px;padding:0 18px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;display:inline-flex;align-items:center;text-decoration:none}
+button.primary{background:var(--accent);color:var(--panel);width:100%;justify-content:center}
+a.btn{background:var(--ok);border-color:var(--ok);color:#fff}
+.msg{font-size:15px;color:var(--ok)}.msg.bad{color:var(--bad)}
+ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+li{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px}
+li b{font-size:15px}li code{font-size:12px;color:var(--muted)}
+[hidden]{display:none!important}
+</style></head><body><main>
+<div id="gate" class="card" style="margin-top:40px">
+  <h1>Key Maker</h1><p class="muted">Offline copy. Enter your Key Maker password.</p>
+  <input id="pw" type="password" autocomplete="current-password" placeholder="Password" autocapitalize="off" autocorrect="off" spellcheck="false">
+  <label style="flex-direction:row;align-items:center;gap:10px;font-size:16px;color:var(--ink)"><input id="showpw" type="checkbox" style="width:22px;height:22px;margin:0"> Show password</label>
+  <button type="button" class="primary" id="go">Open</button>
+  <p id="gmsg" class="msg bad" role="status"></p>
+</div>
+<div id="main" hidden>
+<p id="okpw" style="background:var(--ok);color:#fff;font-weight:600;padding:10px 14px;border-radius:8px;margin:0 0 14px">✓ Password correct. Key Maker is open.</p>
+<h1>Key Maker</h1>
+<p class="muted">Works offline, without Claude. Make a key for one colleague's phone. The key opens the HDT Case 101 file on that phone only.</p>
+<div class="card">
+  <label>Device ID from your colleague<input id="dev" placeholder="HDT-XXXX-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false"></label>
+  <label>Name<input id="nm" placeholder="e.g. Ravi Kumar, PIU Rajkot" autocomplete="off"></label>
+  <label>Valid until<input id="exp" type="date"></label>
+  <label>Tools covered<input id="cases" value="101" autocomplete="off"></label>
+  <button type="button" class="primary" id="make">Make key</button>
+  <p id="msg" class="msg" role="status"></p>
+  <div id="out" hidden style="display:flex;flex-direction:column;gap:10px">
+    <textarea id="key" rows="5" readonly></textarea>
+    <div class="row"><a class="btn" id="wa" href="#">Send on WhatsApp</a><button type="button" id="copy">Copy key</button></div>
+  </div>
+</div>
+<h2>Keys made</h2>
+<ul id="list"><li class="muted">Keys you make will be listed here.</li></ul>
+</div>
+</main>
+<script>
+(function(){
+  var VAULT={"s":"eF477zhkaz9niwAmE2ig-w","i":"m2uhV9A226dZaIIH","c":"kA_I95s7cFEotgzth-b6ztvF2VVA6WxgZ7bDbCZwjcZVXnEUCQNlkVSn84PqYiAKNIkuwQfqpuNEqVSoCd_wwi5qlz_COR87y9ke8-bM5FNWFGbKqjUOnfTpnew5DYmEiN-j1rXsKQWhFQCcSi-10ABfNglW7fuR8seuXeodK9DCDfLIhzlbdyRmvF0K2s1_s8mVlK5k7Ql1ma4a6L7eIo9R_nQ3yESjJEcRt6u5uo4SYI1kftgDZLu770y0YPUL7Z07KPby5qf9pd4neF0HhTkP7BjPhmXYJl2PgPJUJVM4LnRadAKm3kFHtUd93huMiTn9RAaRJ9G8Ad0Q79qtdY_9-OTCAzkfu0YF9xEOEj0ybiAmdYWnsLA"};
+  function gate(){
+    var g=function(i){return document.getElementById(i);};
+    function open(){
+      var pw=g('pw').value; if(!pw){ g('gmsg').textContent='Type the password.'; return; }
+      g('gmsg').textContent=''; g('go').disabled=true; g('go').textContent='Opening…';
+      var u=function(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); s+='='.repeat((4-s.length%4)%4); return Uint8Array.from(atob(s),function(c){return c.charCodeAt(0);}); };
+      crypto.subtle.importKey('raw',new TextEncoder().encode(pw.trim()),'PBKDF2',false,['deriveKey']).then(function(b){
+        return crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:u(VAULT.s),iterations:300000},b,{name:'AES-GCM',length:256},false,['decrypt']);
+      }).then(function(k){ return crypto.subtle.decrypt({name:'AES-GCM',iv:u(VAULT.i)},k,u(VAULT.c)); })
+      .then(function(buf){ var x=JSON.parse(new TextDecoder().decode(buf)); g('gate').hidden=true; g('main').hidden=false; app(x.priv,x.K); },
+        function(){ g('go').disabled=false; g('go').textContent='Open'; g('gmsg').textContent='✗ Wrong password. Tick Show password to check what you typed: capital letters and dashes must match.'; });
+    }
+    g('showpw').addEventListener('change',function(){ g('pw').type=this.checked?'text':'password'; });
+    g('go').addEventListener('click',open); g('pw').addEventListener('keydown',function(e){ if(e.key==='Enter') open(); });
+    if(!(window.crypto&&crypto.subtle)){ g('gmsg').textContent='Open this file in Chrome or Samsung Internet.'; g('go').disabled=true; }
+  }
+  gate();
+  function app(PRIV,K){
+  function $(i){ return document.getElementById(i); }
+  var enc=new TextEncoder();
+  function b64u(b){ var s=''; new Uint8Array(b).forEach(function(x){ s+=String.fromCharCode(x); }); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+  function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); s+='='.repeat((4-s.length%4)%4); return Uint8Array.from(atob(s),function(c){return c.charCodeAt(0);}); }
+  function msg(t,bad){ $('msg').textContent=t; $('msg').className='msg'+(bad?' bad':''); }
+  var d=new Date(); d.setFullYear(d.getFullYear()+1); $('exp').value=d.toISOString().slice(0,10);
+  function makeKey(dev,name,exp,cases){
+    return crypto.subtle.importKey('raw',enc.encode(dev),'HKDF',false,['deriveKey']).then(function(ikm){
+      return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:enc.encode('HDT-wrap-v1'),info:enc.encode('K')},ikm,{name:'AES-GCM',length:256},false,['encrypt']);
+    }).then(function(wk){ var iv=crypto.getRandomValues(new Uint8Array(12));
+      return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},wk,b64d(K)).then(function(ct){ var w=new Uint8Array(12+ct.byteLength); w.set(iv); w.set(new Uint8Array(ct),12); return b64u(w); });
+    }).then(function(w){
+      var body=b64u(enc.encode(JSON.stringify({n:name,d:dev,e:exp,c:cases,w:w})));
+      return crypto.subtle.importKey('jwk',PRIV,{name:'ECDSA',namedCurve:'P-256'},false,['sign']).then(function(pk){
+        return crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},pk,enc.encode(body)); }).then(function(sig){ return 'HDT1.'+body+'.'+b64u(sig); });
+    });
+  }
+  window.__makeKey=makeKey;
+  var db=null, keys=[];
+  function render(){
+    if(!keys.length){ $('list').innerHTML='<li class="muted">Keys you make will be listed here.</li>'; return; }
+    $('list').replaceChildren.apply($('list'),keys.map(function(k){ var li=document.createElement('li');
+      var b=document.createElement('b'); b.textContent=k.n||'No name'; li.appendChild(b);
+      var p=document.createElement('div'); p.textContent='Valid until '+k.e+' · tools '+k.c.join(', '); li.appendChild(p);
+      var c=document.createElement('code'); c.textContent=k.d+' · made '+new Date(k.at).toLocaleDateString('en-IN'); li.appendChild(c); return li; }));
+  }
+  try{ keys=JSON.parse(localStorage.getItem('hdt.made')||'[]'); }catch(e){ keys=[]; } render();
+  $('make').addEventListener('click',function(){
+    var dev=$('dev').value.trim().toUpperCase().replace(/\s+/g,'');
+    if(!/^HDT-[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(dev)){ msg('Paste the full Device ID, like HDT-AB12-CD34-EF56-GH78.',true); return; }
+    var name=$('nm').value.trim(), exp=$('exp').value, cases=$('cases').value.split(/[ ,]+/).filter(Boolean);
+    if(!exp){ msg('Pick a Valid until date.',true); return; } if(!cases.length) cases=['101'];
+    msg('Making key…');
+    makeKey(dev,name,exp,cases).then(function(key){
+      $('key').value=key; $('out').hidden=false;
+      $('wa').href='https://wa.me/?text='+encodeURIComponent('Your key for HDT Case 101 (works on your phone only). Open the file, paste this key and tap Unlock:\n\n'+key);
+      msg('Key ready. Send it to '+(name||'your colleague')+'.');
+      keys.unshift({n:name,d:dev,e:exp,c:cases,at:Date.now()}); try{ localStorage.setItem('hdt.made',JSON.stringify(keys.slice(0,500))); }catch(e){} render();
+    },function(){ msg('Could not make the key. Try again.',true); });
+  });
+  $('copy').addEventListener('click',function(){ try{ navigator.clipboard.writeText($('key').value).then(function(){ msg('Key copied.'); },function(){ $('key').select(); msg('Select the key and copy it.'); }); }catch(e){ $('key').select(); } });
+  }
+})();
+</script>
+</body></html>
