@@ -1,121 +1,242 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Key Maker (offline) – HDT tools</title>
+<title>HDT Key Maker</title>
 <style>
-:root{--bg:#f3f4f2;--panel:#fff;--ink:#1d2321;--muted:#5d6763;--line:#d6dbd8;--accent:#0f5f6e;--soft:#e1eef0;--bad:#b3261e;--ok:#1f8a4c}
-@media (prefers-color-scheme:dark){:root{--bg:#141817;--panel:#1c2120;--ink:#e7ebe9;--muted:#9aa5a1;--line:#2f3735;--accent:#5fb7c6;--soft:#1d3337;--bad:#ff8a80;--ok:#4cc27e;color-scheme:dark}}
+:root{--bg:#f3f4f2;--panel:#fff;--ink:#1d2321;--muted:#5d6763;--line:#d6dbd8;--accent:#0f5f6e;--ok:#1f8a4c;--bad:#b3261e;--soft:#e1eef0}
+@media (prefers-color-scheme:dark){:root{--bg:#141817;--panel:#1c2120;--ink:#e7ebe9;--muted:#9aa5a1;--line:#2f3735;--accent:#5fb7c6;--ok:#6fd39a;--bad:#ff8a80;--soft:#1d3337;color-scheme:dark}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-main{max-width:560px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-left,0px)) 48px max(16px,env(safe-area-inset-right,0px))}
-h1{font-size:26px;margin:0}
-h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:26px 0 8px}
-p{margin:4px 0}.muted{color:var(--muted);font-size:14px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px;margin-top:14px}
-label{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
-input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;width:100%}
-#dev{font-family:ui-monospace,Menlo,Consolas,monospace;text-transform:uppercase}
-textarea{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-button,a.btn{font:600 16px/1 inherit;min-height:46px;padding:0 18px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;display:inline-flex;align-items:center;text-decoration:none}
-button.primary{background:var(--accent);color:var(--panel);width:100%;justify-content:center}
-a.btn{background:var(--ok);border-color:var(--ok);color:#fff}
-.msg{font-size:15px;color:var(--ok)}.msg.bad{color:var(--bad)}
-ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
-li{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px}
-li b{font-size:15px}li code{font-size:12px;color:var(--muted)}
 [hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.5}
+main{max-width:480px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:16px}
+h1{font-size:24px;margin:0}
+h2{font-size:18px;margin:0}
+p{margin:0}.muted{color:var(--muted)}.small{font-size:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.n{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--panel);align-items:center;justify-content:center;font-size:14px;font-weight:700;margin-right:8px;flex:0 0 26px}
+label.l{font-size:15px;font-weight:600}
+input[type=password],input[type=text],input[type=date],textarea{width:100%;font-size:16px;padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font-family:inherit}
+textarea{font-family:ui-monospace,Consolas,monospace;font-size:13px;word-break:break-all}
+input[type=file]{font-size:15px}
+button,a.btn{font-size:16px;font-weight:600;padding:10px 16px;min-height:44px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--panel);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+button.sec,a.sec{background:transparent;color:var(--accent)}
+a.wa{background:#1f8a4c;border-color:#1f8a4c;color:#fff}
+button:disabled{opacity:.5}
+.msg{font-size:15px;min-height:1em;color:var(--accent)}.msg.bad{color:var(--bad)}
+.ok{color:var(--ok);font-weight:600}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.tabs{display:flex;gap:8px}
+.tabs button{flex:1}
+.warn{background:var(--soft);border-radius:6px;padding:10px;font-size:14px}
 </style></head><body><main>
-<div id="gate" class="card" style="margin-top:40px">
-  <h1>Key Maker</h1><p class="muted">Offline copy. Enter your Key Maker password.</p>
-  <input id="pw" type="password" autocomplete="current-password" placeholder="Password" autocapitalize="off" autocorrect="off" spellcheck="false">
-  <label style="flex-direction:row;align-items:center;gap:10px;font-size:16px;color:var(--ink)"><input id="showpw" type="checkbox" style="width:22px;height:22px;margin:0"> Show password</label>
-  <button type="button" class="primary" id="go">Open</button>
-  <p id="gmsg" class="msg bad" role="status"></p>
-</div>
-<div id="main" hidden>
-<p id="okpw" style="background:var(--ok);color:#fff;font-weight:600;padding:10px 14px;border-radius:8px;margin:0 0 14px">✓ Password correct. Key Maker is open.</p>
-<h1>Key Maker</h1>
-<p class="muted">Works offline, without Claude. Make a key for one colleague's phone. The key opens the HDT Case 101 file on that phone only.</p>
-<div class="card">
-  <label>Device ID from your colleague<input id="dev" placeholder="HDT-XXXX-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false"></label>
-  <label>Name<input id="nm" placeholder="e.g. Ravi Kumar, PIU Rajkot" autocomplete="off"></label>
-  <label>Valid until<input id="exp" type="date"></label>
-  <label>Tools covered<input id="cases" value="101" autocomplete="off"></label>
-  <button type="button" class="primary" id="make">Make key</button>
-  <p id="msg" class="msg" role="status"></p>
-  <div id="out" hidden style="display:flex;flex-direction:column;gap:10px">
-    <textarea id="key" rows="5" readonly></textarea>
-    <div class="row"><a class="btn" id="wa" href="#">Send on WhatsApp</a><button type="button" id="copy">Copy key</button></div>
+<div><h1>HDT Key Maker</h1><p class="muted small">Owner's tool. Makes phone keys and locks new versions of the HDT tool. Everything happens on this phone; nothing is sent anywhere.</p></div>
+<p id="noJs" class="msg bad">If this message stays, open this file in Chrome (Android) or on your laptop.</p>
+
+<!-- SETUP: shown only in the blank copy -->
+<section id="setup" hidden="" style="display:flex;flex-direction:column;gap:16px">
+  <div class="card"><h2>First-time setup: choose your new password</h2>
+    <p class="small">This makes a brand-new Key Maker that only your password can open. Old keys will not work with it.</p>
+    <div class="warn"><b>Write the password on paper and keep it safe.</b> If it is lost, nobody can recover it.<br>Use at least 10 characters, e.g. three words and a number.</div>
+    <label class="l" for="np1">New password</label>
+    <input id="np1" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <label class="l" for="np2">Type it again</label>
+    <input id="np2" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <label style="display:flex;gap:8px;align-items:center;font-size:15px"><input id="showNew" type="checkbox" style="width:20px;height:20px"> Show password</label>
+    <button id="doSetup" type="button">Create my Key Maker</button>
+    <p id="setupMsg" class="msg" role="status"></p>
+    <div id="setupOut" hidden="" class="row"><a id="setupDl" class="btn" href="#" download="keymaker.html">Download keymaker.html</a><button id="setupShare" class="sec" type="button">Share…</button></div>
+    <p id="setupNext" hidden="" class="small muted">Next: open the <b>downloaded</b> keymaker.html (not this one) and type your new password.</p>
   </div>
-</div>
-<h2>Keys made</h2>
-<ul id="list"><li class="muted">Keys you make will be listed here.</li></ul>
-</div>
+</section>
+
+<!-- UNLOCK: shown in the set-up copy -->
+<section id="login" hidden="" class="card">
+  <p><span class="n">🔑</span><b>Key Maker password</b></p>
+  <input id="pw" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Password">
+  <label style="display:flex;gap:8px;align-items:center;font-size:15px"><input id="show" type="checkbox" style="width:20px;height:20px"> Show password</label>
+  <button id="unlock" type="button">Open</button>
+  <p id="loginMsg" class="msg" role="status"></p>
+  <p id="made" class="muted small"></p>
+</section>
+
+<section id="work" hidden="" style="display:flex;flex-direction:column;gap:16px">
+  <div class="tabs"><button id="tKey" type="button">Make a key</button><button id="tLock" type="button" class="sec">Lock the tool</button></div>
+
+  <div id="pKey" class="card">
+    <h2>Make a key for a colleague's phone</h2>
+    <label class="l" for="dev">Device ID (paste their whole message, it's fine)</label>
+    <input id="dev" type="text" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="HDT-XXXX-XXXX-XXXX-XXXX">
+    <p id="devInfo" class="small"></p>
+    <label class="l" for="who">Colleague's name</label>
+    <input id="who" type="text" placeholder="e.g. R. Sharma">
+    <label class="l" for="exp">Valid until <span class="muted small">(leave empty for no end date)</span></label>
+    <input id="exp" type="date">
+    <label class="l" for="tools">Tools</label>
+    <input id="tools" type="text" value="ALL" autocapitalize="characters" spellcheck="false">
+    <p class="muted small">Keep <b>ALL</b> for the all-cases tool (hdt.html).</p>
+    <button id="mk" type="button">Make key</button>
+    <p id="keyMsg" class="msg" role="status"></p>
+    <div id="keyOut" hidden="" style="display:flex;flex-direction:column;gap:8px">
+      <textarea id="keyTxt" rows="5" readonly=""></textarea>
+      <div class="row"><a id="keyWa" class="btn wa" href="#" target="_blank" rel="noopener">Send on WhatsApp</a><button id="keyCopy" type="button" class="sec">Copy</button></div>
+    </div>
+  </div>
+
+  <div id="pLock" class="card" hidden="">
+    <h2>Lock a new version of the tool</h2>
+    <p class="small">Pick the <b>unlocked</b> tool file Claude sends you (e.g. hdt-all-cases.html).</p>
+    <input id="file" type="file" accept=".html,.htm,text/html"><p id="fileInfo" class="muted small"></p>
+    <button id="go" type="button">Make locked file</button>
+    <p id="lockMsg" class="msg" role="status"></p>
+    <div id="lockOut" hidden="" class="row"><a id="dl" class="btn" href="#" download="hdt.html">Download hdt.html</a><button id="share" class="sec" type="button">Share…</button></div>
+    <p id="lockNext" hidden="" class="muted small">Next: upload <b>hdt.html</b> to your GitHub site (manishplusanand.github.io), replacing the old one. Colleagues' keys keep working.</p>
+  </div>
+</section>
 </main>
 <script>
+var VAULT={"v":1,"made":"2026-11-07","pub":{"kty":"EC","crv":"P-256","x":"f9QMl9NWWmM9Tpq1aessDjonggEsdpVoiuWw9d5mfIU","y":"b24Y7zx6-PbjUexl895nhub_oD6iXEV8Ka8f4T6uUQ8"},"s":"fo7cYEwx5O62_NCnKYwyng","i":"cQHa97uMFtTt4e5m","c":"DJUgWVZaykFwljx6cgDZ-_VB4-TcFoedpg60oegu1WiwX593WON0YQTovIiwQLhvomX9mhcCobEcjmbSdt3N7aRImycN3Ohs_q4TbOwA2XCV7UrSaa6Z-NaC7UPJgKqs2XVD39ip2IFA4jNc_rTpUhQFs1c1cwE8WWh2C4vzKCb2BX-OCTG-rSwqpQD1TzZEJRbiqsXarqPjmYydnHpFUpdI-jCJut7YAnZUopzOZDEIsHIu6vF7OZMVByJ230EcfWm_gXuSxKl_HuVxitc3rIB2kBulHVhPHI37c0pfBs2Laa8Vse_KEUiFhoeB29AI4q3NLedZzWRh2dg"};
 (function(){
-  var VAULT={"s":"eF477zhkaz9niwAmE2ig-w","i":"m2uhV9A226dZaIIH","c":"kA_I95s7cFEotgzth-b6ztvF2VVA6WxgZ7bDbCZwjcZVXnEUCQNlkVSn84PqYiAKNIkuwQfqpuNEqVSoCd_wwi5qlz_COR87y9ke8-bM5FNWFGbKqjUOnfTpnew5DYmEiN-j1rXsKQWhFQCcSi-10ABfNglW7fuR8seuXeodK9DCDfLIhzlbdyRmvF0K2s1_s8mVlK5k7Ql1ma4a6L7eIo9R_nQ3yESjJEcRt6u5uo4SYI1kftgDZLu770y0YPUL7Z07KPby5qf9pd4neF0HhTkP7BjPhmXYJl2PgPJUJVM4LnRadAKm3kFHtUd93huMiTn9RAaRJ9G8Ad0Q79qtdY_9-OTCAzkfu0YF9xEOEj0ybiAmdYWnsLA"};
-  function gate(){
-    var g=function(i){return document.getElementById(i);};
-    function open(){
-      var pw=g('pw').value; if(!pw){ g('gmsg').textContent='Type the password.'; return; }
-      g('gmsg').textContent=''; g('go').disabled=true; g('go').textContent='Opening…';
-      var u=function(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); s+='='.repeat((4-s.length%4)%4); return Uint8Array.from(atob(s),function(c){return c.charCodeAt(0);}); };
-      crypto.subtle.importKey('raw',new TextEncoder().encode(pw.trim()),'PBKDF2',false,['deriveKey']).then(function(b){
-        return crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:u(VAULT.s),iterations:300000},b,{name:'AES-GCM',length:256},false,['decrypt']);
-      }).then(function(k){ return crypto.subtle.decrypt({name:'AES-GCM',iv:u(VAULT.i)},k,u(VAULT.c)); })
-      .then(function(buf){ var x=JSON.parse(new TextDecoder().decode(buf)); g('gate').hidden=true; g('main').hidden=false; app(x.priv,x.K); },
-        function(){ g('go').disabled=false; g('go').textContent='Open'; g('gmsg').textContent='✗ Wrong password. Tick Show password to check what you typed: capital letters and dashes must match.'; });
-    }
-    g('showpw').addEventListener('change',function(){ g('pw').type=this.checked?'text':'password'; });
-    g('go').addEventListener('click',open); g('pw').addEventListener('keydown',function(e){ if(e.key==='Enter') open(); });
-    if(!(window.crypto&&crypto.subtle)){ g('gmsg').textContent='Open this file in Chrome or Samsung Internet.'; g('go').disabled=true; }
-  }
-  gate();
-  function app(PRIV,K){
+  var SELF='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  var WRAP="<!DOCTYPE html>\n<html lang=\"en\"><head><meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1,viewport-fit=cover\">\n<title>HDT \u00b7 12 standard cases<\/title>\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap\">\n<style>\n/* Layout: engineering calc sheet. Inputs column on the left, verdict + pavement section + IITPave-style table on the right. */\n:root{\n  --bg:#f3f4f2; --panel:#ffffff; --ink:#1d2321; --muted:#5d6763; --line:#d6dbd8;\n  --accent:#0f5f6e; --accent-soft:#e1eef0;\n  --bit:#2b2f2e; --wmm:#8e928c; --gsb:#c9b58f; --sub:#8a6b4a;\n  --fail:#b3261e; --fail-bg:#f6d6d3; --warn-bg:#fbefb3; --orange-bg:#fbdcb8; --green-bg:#d5eccb; --pink-bg:#f8dbe7;\n  --tag-ink:#1d2321;\n  --display:\"Archivo\",\"Helvetica Neue\",Arial,sans-serif;\n  --body:\"Public Sans\",\"Segoe UI\",Roboto,Arial,sans-serif;\n  --mono:\"IBM Plex Mono\",ui-monospace,\"SFMono-Regular\",Consolas,monospace;\n}\n@media (prefers-color-scheme: dark){:root:not([data-theme=\"light\"]){\n  --bg:#141817; --panel:#1c2120; --ink:#e7ebe9; --muted:#9aa5a1; --line:#2f3735;\n  --accent:#5fb7c6; --accent-soft:#1d3337;\n  --bit:#0b0d0c; --wmm:#6d716c; --gsb:#9c8a66; --sub:#6e5439;\n  --fail:#ff8a80; --fail-bg:#5a1e1a; --warn-bg:#5a4f17; --orange-bg:#5c3d1c; --green-bg:#24442a; --pink-bg:#4e2636;\n  --tag-ink:#f1f3f2; color-scheme:dark}}\n:root[data-theme=\"dark\"]{\n  --bg:#141817; --panel:#1c2120; --ink:#e7ebe9; --muted:#9aa5a1; --line:#2f3735;\n  --accent:#5fb7c6; --accent-soft:#1d3337;\n  --bit:#0b0d0c; --wmm:#6d716c; --gsb:#9c8a66; --sub:#6e5439;\n  --fail:#ff8a80; --fail-bg:#5a1e1a; --warn-bg:#5a4f17; --orange-bg:#5c3d1c; --green-bg:#24442a; --pink-bg:#4e2636;\n  --tag-ink:#f1f3f2; color-scheme:dark}\n*{box-sizing:border-box}\nbody{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5}\n.wrap{max-width:1240px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}\nheader{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:22px}\nh1{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.2vw,34px);letter-spacing:-.01em;margin:0;line-height:1.1;text-wrap:balance}\n.sub{color:var(--muted);margin:4px 0 0;max-width:68ch}\n.chip{font-family:var(--mono);font-size:12px;border:1px solid var(--line);background:var(--panel);padding:4px 10px;border-radius:3px;white-space:nowrap}\n.grid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:22px;align-items:start}\n@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}\n.panel{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:16px 18px}\nh2{font-family:var(--display);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px;color:var(--muted)}\nfieldset{border:0;margin:0 0 16px;padding:0}\nfieldset:last-child{margin-bottom:0}\nlegend{font-family:var(--display);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:8px;padding:0}\n.f{display:grid;grid-template-columns:minmax(0,1fr) 108px;align-items:center;gap:8px;padding:3px 0}\n.f label{color:var(--ink);font-size:13px}\n.f label small{color:var(--muted);font-size:11px;margin-left:4px}\ninput,select{font-family:var(--mono);font-size:13px;width:100%;padding:5px 7px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--ink);text-align:right}\nselect{text-align:left}\ninput:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}\n.derived{font-family:var(--mono);font-size:13px;text-align:right;padding:5px 8px;color:var(--accent);background:var(--accent-soft);border-radius:3px}\n.right{display:flex;flex-direction:column;gap:22px;min-width:0}\n.verdict{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}\n@media (max-width:600px){.verdict{grid-template-columns:minmax(0,1fr)}}\n.v{border:1px solid var(--line);border-radius:4px;background:var(--panel);padding:14px 16px;display:flex;flex-direction:column;gap:8px}\n.v .head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}\n.v .name{font-family:var(--display);font-weight:700;font-size:15px}\n.v .where{color:var(--muted);font-size:12px}\n.big{font-family:var(--mono);font-size:28px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums}\n.big small{font-size:13px;color:var(--muted);margin-left:6px;letter-spacing:0}\n.kv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;font-size:13px}\n.kv span:nth-child(odd){color:var(--muted)}\n.kv span:nth-child(even){font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}\n.bar{height:10px;border-radius:2px;background:var(--line);position:relative;overflow:hidden}\n.bar i{position:absolute;inset:0 auto 0 0;background:var(--accent)}\n.bar::after{content:\"\";position:absolute;left:83.333%;top:0;bottom:0;width:2px;background:var(--ink)}\n.pill{display:inline-block;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;color:var(--tag-ink)}\n.c-fail{background:var(--fail-bg)} .c-warn{background:var(--warn-bg)} .c-orange{background:var(--orange-bg)} .c-green{background:var(--green-bg)} .c-pink{background:var(--pink-bg)}\n.cmp{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:13px;border-top:1px dashed var(--line);padding-top:8px}\n.cmp input{width:110px}\n.cmp .d{font-family:var(--mono)}\n.sectionrow{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:22px;align-items:start}\n@media (max-width:700px){.sectionrow{grid-template-columns:minmax(0,1fr)}}\nsvg text{font-family:var(--body)}\n.tbl{overflow-x:auto}\ntable{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums;min-width:720px}\nth,td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}\nth{font-family:var(--body);font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1.5px solid var(--ink)}\ntd.l,th.l{text-align:left}\ntr.hit td{background:var(--accent-soft)}\ntd.crit{font-weight:600;color:var(--accent)}\n.note{color:var(--muted);font-size:12px;margin:10px 0 0;max-width:80ch}\n.status{font-size:12px;color:var(--muted);font-family:var(--mono)}\n.legend{display:flex;flex-wrap:wrap;gap:6px}\nbutton{font-family:var(--body);font-size:13px;font-weight:600;padding:6px 12px;border-radius:3px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer}\nbutton:hover{background:var(--accent-soft)}\nbutton.primary{background:var(--accent);color:var(--panel)}\nbutton.primary:hover{filter:brightness(1.1);background:var(--accent)}\n.f input[type=text]{text-align:left;font-family:var(--body)}\n.dock{display:none}\n@media (max-width:900px){\n  .dock{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;gap:8px;align-items:stretch;\n    background:var(--panel);border-top:2px solid var(--ink);\n    padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));\n    padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}\n  .dock a{display:flex;flex-direction:column;gap:1px;text-decoration:none;color:var(--tag-ink);flex:1;min-width:0;padding:4px 8px;border-radius:4px}\n  .dock b{font-family:var(--mono);font-weight:500;font-size:15px}\n  .dock small{font-size:11px}\n  .dock button{flex:0 0 auto;padding:6px 10px}\n  .wrap{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}\n}\n.mlist{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:13px}\n.mlist b{font-family:var(--mono);font-weight:500}\n<\/style>\n<style>\nbody{margin:0}\n[hidden]{display:none!important}\n.lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding-block:32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}\n.lockcard{width:100%;max-width:460px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:22px;display:flex;flex-direction:column;gap:14px;font-size:16px}\n.lockcard h1{font-size:24px}\n.lockcard p{margin:0;color:var(--muted)}\n.step{display:flex;gap:10px;align-items:flex-start}\n.step b.n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--accent);color:var(--panel);display:flex;align-items:center;justify-content:center;font-size:14px}\n.devid{font-family:var(--mono);font-size:18px;letter-spacing:.03em;background:var(--accent-soft);color:var(--accent);padding:8px 10px;border-radius:4px;user-select:all;word-break:break-all}\n.lockcard textarea{width:100%;font-family:var(--mono);font-size:13px;padding:8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}\n.lockcard button,.lockcard a.btn{font-size:16px;padding:10px 16px;min-height:44px;border-radius:6px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}\n.lockcard a.btn{background:#1f8a4c;color:#fff;font-weight:600;border:0}\n.row{display:flex;gap:8px;flex-wrap:wrap}\n.msg{font-size:15px;color:var(--accent)!important;min-height:1em}\n.msg.bad{color:var(--fail)!important}\n.licline{font-size:12px;color:var(--muted);font-family:var(--mono);margin:0;padding:0 16px 24px}\n@media (max-width:900px){.licline{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}}\n<\/style>\n<\/head><body>\n<div id=\"lock\" class=\"lock\"><div class=\"lockcard\">\n  <div><h1>HDT \u00b7 12 standard cases<\/h1><p>Pavement analysis tool, Cases 101\u2013112 \u00b7 locked to this phone<\/p><p style=\"font-size:13px;font-family:var(--mono)\">Version: __STAMP__<\/p><\/div>\n  <p id=\"noJs\">Loading\u2026 If this message stays, open this file in Chrome or Safari, not in a file viewer.<\/p>\n  <div id=\"lockUI\" hidden style=\"display:flex;flex-direction:column;gap:14px\">\n    <div class=\"step\"><b class=\"n\">1<\/b><div style=\"flex:1;min-width:0\"><p style=\"margin-bottom:6px\">Send this Device ID to the tool owner:<\/p>\n      <div class=\"devid\" id=\"devId\">\u2026<\/div>\n      <div class=\"row\" style=\"margin-top:8px\"><a class=\"btn\" id=\"wa\" href=\"#\">Send on WhatsApp<\/a><button type=\"button\" id=\"copyDev\">Copy<\/button><\/div><\/div><\/div>\n    <div class=\"step\"><b class=\"n\">2<\/b><div style=\"flex:1;min-width:0\"><p style=\"margin-bottom:6px\">Paste the key you receive, then tap Unlock:<\/p>\n      <textarea id=\"licKey\" rows=\"4\" placeholder=\"HDT1.\u2026\" autocomplete=\"off\" spellcheck=\"false\"><\/textarea>\n      <div class=\"row\" style=\"margin-top:8px\"><button type=\"button\" id=\"activate\" class=\"primary\">Unlock<\/button><\/div><\/div><\/div>\n    <p id=\"licMsg\" class=\"msg\" role=\"status\"><\/p>\n  <\/div>\n<\/div><\/div>\n<div id=\"app\" hidden><\/div>\n<p id=\"licline\" class=\"licline\" hidden><\/p>\n<script>\n(function(){\n  var CASE=\"ALL\";\n  var PUB=__PUB__;\n  var BLOB=\"__BLOB__\";\n  function $(i){ return document.getElementById(i); }\n  $('noJs').hidden=true;\n  var enc=new TextEncoder(), dec=new TextDecoder();\n  function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); s+='='.repeat((4-s.length%4)%4); return Uint8Array.from(atob(s),function(c){return c.charCodeAt(0);}); }\n  function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); return v; }catch(e){ return null; } }\n  function msg(t,bad){ var m=$('licMsg'); m.textContent=t; m.className='msg'+(bad?' bad':''); }\n  function show(){ $('lockUI').hidden=false; }\n  if(!(window.crypto&&crypto.subtle)){ show(); $('devId').textContent='\u2014'; msg('This browser cannot open the tool. Open the file in Chrome or Safari.',true); return; }\n\n  // Device ID: kept on the phone; if the browser forgets it, rebuilt from the phone's hardware so it stays the same.\n  function fp(){\n    var p=[];\n    try{ var w=screen.width, h=screen.height, r=window.devicePixelRatio||1; p.push(Math.round(Math.min(w,h)*r/10), Math.round(Math.max(w,h)*r/10)); }catch(e){}\n    p.push(navigator.platform||'', navigator.hardwareConcurrency||0, navigator.deviceMemory||0, navigator.maxTouchPoints||0);\n    try{ var c=document.createElement('canvas'), g=c.getContext('webgl'); var x=g&&g.getExtension('WEBGL_debug_renderer_info'); p.push(x?g.getParameter(x.UNMASKED_RENDERER_WEBGL):''); }catch(e){ p.push(''); }\n    return p.join('|');\n  }\n  function deviceId(){\n    var d=store('hdt.device'); if(d&&/^HDT-[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(d)) return Promise.resolve(d);\n    return crypto.subtle.digest('SHA-256',enc.encode('hdt-dev|'+fp())).then(function(h){\n      var A='0123456789ABCDEFGHJKMNPQRSTVWXYZ', b=new Uint8Array(h), s=''; for(var i=0;i<16;i++) s+=A[b[i]%32];\n      d='HDT-'+s.match(/.{4}/g).join('-'); store('hdt.device',d); return d;\n    });\n  }\n  function wrapKey(dev){\n    return crypto.subtle.importKey('raw',enc.encode(dev),'HKDF',false,['deriveKey']).then(function(ikm){\n      return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:enc.encode('HDT-wrap-v1'),info:enc.encode('K')},ikm,{name:'AES-GCM',length:256},false,['decrypt']); });\n  }\n  var BAD='This is not a valid key. Copy the whole key exactly as received.';\n  function today(){ var t=new Date(); return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0'); }\n  function tryKey(key,dev){\n    var parts=String(key).trim().replace(/\\s+/g,'').split('.');\n    if(parts.length!==3||parts[0]!=='HDT1') return Promise.resolve({ok:false,why:BAD});\n    var payload;\n    return crypto.subtle.importKey('jwk',PUB,{name:'ECDSA',namedCurve:'P-256'},false,['verify']).then(function(pub){\n      return crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},pub,b64d(parts[2]),enc.encode(parts[1]));\n    }).then(function(good){\n      if(!good) throw {why:'This key was not made by the tool owner, or it was changed.'};\n      payload=JSON.parse(dec.decode(b64d(parts[1])));\n      if(payload.d!==dev) throw {why:'This key is for another phone ('+payload.d+'). Each key works on one phone only. Send your own Device ID to the owner.'};\n      if(payload.e&&today()>payload.e) throw {why:'This key expired on '+payload.e+'. Ask the owner for a new key.'};\n      var c=payload.c||[]; if(c.indexOf('*')<0&&c.indexOf(CASE)<0) throw {why:'This key is not for the all-cases tool. Ask the owner for a key made with ALL in the tools box.'};\n      var w=b64d(payload.w);\n      return wrapKey(dev).then(function(wk){ return crypto.subtle.decrypt({name:'AES-GCM',iv:w.slice(0,12)},wk,w.slice(12)); });\n    }).then(function(K){ return crypto.subtle.importKey('raw',K,'AES-GCM',false,['decrypt']); })\n    .then(function(ck){ var b=b64d(BLOB); return crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},ck,b.slice(12)); })\n    .then(function(buf){ return {ok:true,payload:payload,app:JSON.parse(dec.decode(buf))}; })\n    .catch(function(e){ return {ok:false,why:(e&&e.why)||BAD}; });\n  }\n  function mount(app,p){\n    $('lock').hidden=true; $('app').hidden=false; $('app').innerHTML=app.html;\n    var sc=document.createElement('script'); sc.textContent=app.js; document.body.appendChild(sc);\n    var l=$('licline'); l.hidden=false; l.textContent='Licensed to '+(p.n||'user')+' \u00b7 this phone only ('+p.d+') \u00b7 valid until '+(p.e||'no end date');\n  }\n  deviceId().then(function(dev){\n    $('devId').textContent=dev;\n    $('wa').href='https://wa.me/?text='+encodeURIComponent('Please send me a key for HDT all cases (101-112). My Device ID: '+dev);\n    $('copyDev').addEventListener('click',function(){\n      var done=function(){ msg('Device ID copied. Send it to the tool owner.'); };\n      try{ navigator.clipboard.writeText(dev).then(done,function(){ msg('Press and hold the Device ID to copy it.'); }); }catch(e){ msg('Press and hold the Device ID to copy it.'); }\n    });\n    var saved=store('hdt.key.'+CASE);\n    var first=saved?tryKey(saved,dev):Promise.resolve(null);\n    first.then(function(r){\n      if(r&&r.ok){ mount(r.app,r.payload); return; }\n      show(); if(r) msg(r.why,true);\n      $('activate').addEventListener('click',function(){\n        var k=$('licKey').value; if(!k.trim()){ msg('Paste the key first.',true); return; }\n        msg('Checking key\u2026');\n        tryKey(k,dev).then(function(r){\n          if(!r.ok){ msg(r.why,true); return; }\n          store('hdt.key.'+CASE,k.trim().replace(/\\s+/g,''));\n          mount(r.app,r.payload);\n        });\n      });\n    });\n  },function(){ show(); msg('This phone could not make a Device ID. Open the file in Chrome or Safari.',true); });\n})();\n<\/script>\n<\/body><\/html>\n";
   function $(i){ return document.getElementById(i); }
-  var enc=new TextEncoder();
-  function b64u(b){ var s=''; new Uint8Array(b).forEach(function(x){ s+=String.fromCharCode(x); }); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
-  function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); s+='='.repeat((4-s.length%4)%4); return Uint8Array.from(atob(s),function(c){return c.charCodeAt(0);}); }
-  function msg(t,bad){ $('msg').textContent=t; $('msg').className='msg'+(bad?' bad':''); }
-  var d=new Date(); d.setFullYear(d.getFullYear()+1); $('exp').value=d.toISOString().slice(0,10);
-  function makeKey(dev,name,exp,cases){
-    return crypto.subtle.importKey('raw',enc.encode(dev),'HKDF',false,['deriveKey']).then(function(ikm){
-      return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:enc.encode('HDT-wrap-v1'),info:enc.encode('K')},ikm,{name:'AES-GCM',length:256},false,['encrypt']);
-    }).then(function(wk){ var iv=crypto.getRandomValues(new Uint8Array(12));
-      return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},wk,b64d(K)).then(function(ct){ var w=new Uint8Array(12+ct.byteLength); w.set(iv); w.set(new Uint8Array(ct),12); return b64u(w); });
-    }).then(function(w){
-      var body=b64u(enc.encode(JSON.stringify({n:name,d:dev,e:exp,c:cases,w:w})));
-      return crypto.subtle.importKey('jwk',PRIV,{name:'ECDSA',namedCurve:'P-256'},false,['sign']).then(function(pk){
-        return crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},pk,enc.encode(body)); }).then(function(sig){ return 'HDT1.'+body+'.'+b64u(sig); });
+  $('noJs').hidden=true;
+  var enc=new TextEncoder(), dec=new TextDecoder();
+  function u(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); s+='='.repeat((4-s.length%4)%4); return Uint8Array.from(atob(s),function(c){return c.charCodeAt(0);}); }
+  function b64u(b){ var s='',a=new Uint8Array(b); for(var i=0;i<a.length;i+=8192) s+=String.fromCharCode.apply(null,a.subarray(i,i+8192)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+  function say(id,t,bad){ $(id).textContent=t; $(id).className='msg'+(bad?' bad':''); }
+  function fill(tpl,map){ return tpl.replace(/__([A-Z]+)__/g,function(m,k){ return (k in map)?map[k]:m; }); }
+  function shareFile(text,name,msgId){
+    try{ var f=new File([text],name,{type:'text/html'});
+      if(navigator.canShare&&navigator.canShare({files:[f]})) navigator.share({files:[f],title:name}).catch(function(){});
+      else say(msgId,'Sharing files is not available here. Use Download.',true);
+    }catch(e){ say(msgId,'Sharing files is not available here. Use Download.',true); }
+  }
+  function toggle(boxId,ids){ $(boxId).addEventListener('change',function(){ var c=this.checked; ids.forEach(function(i){ $(i).type=c?'text':'password'; }); }); }
+  if(!(window.crypto&&crypto.subtle)){ $('setup').hidden=false; say('setupMsg','This browser cannot do this. Open the file in Chrome.',true); $('doSetup').disabled=true; return; }
+  function pwKey(pw,salt){
+    return crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveKey']).then(function(b){
+      return crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:salt,iterations:300000},b,{name:'AES-GCM',length:256},false,['encrypt','decrypt']); });
+  }
+
+  // ---------- Blank copy: first-time setup ----------
+  if(!VAULT){
+    $('setup').hidden=false; toggle('showNew',['np1','np2']);
+    var setupText='', setupUrl=null;
+    $('doSetup').addEventListener('click',function(){
+      var a=$('np1').value, b=$('np2').value;
+      if(a.trim().length<10){ say('setupMsg','Use at least 10 characters.',true); return; }
+      if(a!==b){ say('setupMsg','The two passwords are not the same. Tick Show password to check.',true); return; }
+      if(a!==a.trim()){ say('setupMsg','Remove spaces at the start or end of the password.',true); return; }
+      $('doSetup').disabled=true; say('setupMsg','Creating… (a few seconds)');
+      var pub, secret;
+      crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']).then(function(kp){
+        return Promise.all([crypto.subtle.exportKey('jwk',kp.publicKey),crypto.subtle.exportKey('jwk',kp.privateKey)]);
+      }).then(function(j){
+        pub={kty:'EC',crv:'P-256',x:j[0].x,y:j[0].y};
+        secret={K:b64u(crypto.getRandomValues(new Uint8Array(32))),priv:{kty:'EC',crv:'P-256',x:j[1].x,y:j[1].y,d:j[1].d}};
+        var salt=crypto.getRandomValues(new Uint8Array(16)), iv=crypto.getRandomValues(new Uint8Array(12));
+        return pwKey(a,salt).then(function(k){ return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},k,enc.encode(JSON.stringify(secret))); })
+          .then(function(ct){ return {v:1,made:new Date().toISOString().slice(0,10),pub:pub,s:b64u(salt),i:b64u(iv),c:b64u(ct)}; });
+      }).then(function(vault){
+        var marker='var VAULT='+'null;';
+        if(SELF.indexOf(marker)<0) throw 0;
+        setupText=SELF.replace(marker,function(){ return 'var VAULT='+JSON.stringify(vault)+';'; });
+        if(setupUrl) URL.revokeObjectURL(setupUrl); setupUrl=URL.createObjectURL(new Blob([setupText],{type:'text/html'}));
+        $('setupDl').href=setupUrl; $('setupOut').hidden=false; $('setupNext').hidden=false;
+        $('np1').value=''; $('np2').value='';
+        say('setupMsg','✓ Your new Key Maker is ready. Download it now.');
+      }).catch(function(){ $('doSetup').disabled=false; say('setupMsg','Something went wrong. Try again in Chrome.',true); });
     });
+    $('setupShare').addEventListener('click',function(){ shareFile(setupText,'keymaker.html','setupMsg'); });
+    return;
   }
-  window.__makeKey=makeKey;
-  var db=null, keys=[];
-  function render(){
-    if(!keys.length){ $('list').innerHTML='<li class="muted">Keys you make will be listed here.</li>'; return; }
-    $('list').replaceChildren.apply($('list'),keys.map(function(k){ var li=document.createElement('li');
-      var b=document.createElement('b'); b.textContent=k.n||'No name'; li.appendChild(b);
-      var p=document.createElement('div'); p.textContent='Valid until '+k.e+' · tools '+k.c.join(', '); li.appendChild(p);
-      var c=document.createElement('code'); c.textContent=k.d+' · made '+new Date(k.at).toLocaleDateString('en-IN'); li.appendChild(c); return li; }));
+
+  // ---------- Set-up copy: unlock with password ----------
+  $('login').hidden=false; toggle('show',['pw']);
+  if(VAULT.made) $('made').textContent='This Key Maker was created on '+VAULT.made+'.';
+  var S=null, signKey=null, contentKey=null;
+  function openIt(){
+    var pw=$('pw').value; if(!pw.trim()){ say('loginMsg','Type the password.',true); return; }
+    $('unlock').disabled=true; say('loginMsg','Checking password…');
+    pwKey(pw.trim(),u(VAULT.s)).then(function(k){ return crypto.subtle.decrypt({name:'AES-GCM',iv:u(VAULT.i)},k,u(VAULT.c)); })
+    .then(function(buf){
+      S=JSON.parse(dec.decode(buf));
+      return Promise.all([
+        crypto.subtle.importKey('jwk',S.priv,{name:'ECDSA',namedCurve:'P-256'},false,['sign']),
+        crypto.subtle.importKey('raw',u(S.K),'AES-GCM',false,['encrypt'])]);
+    },function(){ throw {why:'✗ Wrong password. Tick Show password to check what you typed.'}; })
+    .then(function(ks){ signKey=ks[0]; contentKey=ks[1]; $('pw').value=''; $('login').hidden=true; $('work').hidden=false; })
+    .catch(function(e){ $('unlock').disabled=false; say('loginMsg',(e&&e.why)||'Could not open. Try again in Chrome.',true); });
   }
-  try{ keys=JSON.parse(localStorage.getItem('hdt.made')||'[]'); }catch(e){ keys=[]; } render();
-  $('make').addEventListener('click',function(){
-    var dev=$('dev').value.trim().toUpperCase().replace(/\s+/g,'');
-    if(!/^HDT-[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{4}$/.test(dev)){ msg('Paste the full Device ID, like HDT-AB12-CD34-EF56-GH78.',true); return; }
-    var name=$('nm').value.trim(), exp=$('exp').value, cases=$('cases').value.split(/[ ,]+/).filter(Boolean);
-    if(!exp){ msg('Pick a Valid until date.',true); return; } if(!cases.length) cases=['101'];
-    msg('Making key…');
-    makeKey(dev,name,exp,cases).then(function(key){
-      $('key').value=key; $('out').hidden=false;
-      $('wa').href='https://wa.me/?text='+encodeURIComponent('Your key for HDT Case 101 (works on your phone only). Open the file, paste this key and tap Unlock:\n\n'+key);
-      msg('Key ready. Send it to '+(name||'your colleague')+'.');
-      keys.unshift({n:name,d:dev,e:exp,c:cases,at:Date.now()}); try{ localStorage.setItem('hdt.made',JSON.stringify(keys.slice(0,500))); }catch(e){} render();
-    },function(){ msg('Could not make the key. Try again.',true); });
+  $('unlock').addEventListener('click',openIt);
+  $('pw').addEventListener('keydown',function(e){ if(e.key==='Enter') openIt(); });
+
+  function tab(k){ $('pKey').hidden=!k; $('pLock').hidden=k; $('tKey').className=k?'':'sec'; $('tLock').className=k?'sec':''; }
+  $('tKey').addEventListener('click',function(){ tab(true); });
+  $('tLock').addEventListener('click',function(){ tab(false); });
+
+  // ---------- Make a key ----------
+  var RX=/HDT-[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{4}/;
+  function devFrom(t){ var m=String(t).toUpperCase().replace(/\s+/g,'').match(RX); return m?m[0]:null; }
+  $('dev').addEventListener('input',function(){ var d=devFrom(this.value);
+    $('devInfo').textContent=this.value.trim()?(d?'✓ '+d:'✗ No Device ID found. It looks like HDT-XXXX-XXXX-XXXX-XXXX.'):'';
+    $('devInfo').className='small '+(d?'ok':'msg bad'); });
+  function wrapKey(dev){
+    return crypto.subtle.importKey('raw',enc.encode(dev),'HKDF',false,['deriveKey']).then(function(ikm){
+      return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:enc.encode('HDT-wrap-v1'),info:enc.encode('K')},ikm,{name:'AES-GCM',length:256},false,['encrypt']); });
+  }
+  var lastKey='';
+  $('mk').addEventListener('click',function(){
+    var d=devFrom($('dev').value); if(!d){ say('keyMsg','Paste the Device ID first.',true); return; }
+    var n=$('who').value.trim().slice(0,60), e=$('exp').value;
+    var c=$('tools').value.toUpperCase().split(/[\s,]+/).filter(Boolean); if(!c.length) c=['ALL'];
+    say('keyMsg','Making key…'); $('keyOut').hidden=true;
+    wrapKey(d).then(function(wk){ var iv=crypto.getRandomValues(new Uint8Array(12));
+      return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},wk,u(S.K)).then(function(ct){ var w=new Uint8Array(12+ct.byteLength); w.set(iv); w.set(new Uint8Array(ct),12); return b64u(w); }); })
+    .then(function(w){
+      var p={d:d,n:n||'user',c:c,w:w}; if(e) p.e=e;
+      var body=b64u(enc.encode(JSON.stringify(p)));
+      return crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},signKey,enc.encode(body)).then(function(sig){ return 'HDT1.'+body+'.'+b64u(sig); });
+    }).then(function(k){
+      lastKey=k; $('keyTxt').value=k; $('keyOut').hidden=false;
+      $('keyWa').href='https://wa.me/?text='+encodeURIComponent(k);
+      say('keyMsg','✓ Key for '+d+(n?' ('+n+')':'')+(e?', valid until '+e:', no end date')+'. Send it to them.');
+    }).catch(function(){ say('keyMsg','Could not make the key. Try again.',true); });
   });
-  $('copy').addEventListener('click',function(){ try{ navigator.clipboard.writeText($('key').value).then(function(){ msg('Key copied.'); },function(){ $('key').select(); msg('Select the key and copy it.'); }); }catch(e){ $('key').select(); } });
-  }
+  $('keyCopy').addEventListener('click',function(){
+    try{ navigator.clipboard.writeText(lastKey).then(function(){ say('keyMsg','✓ Key copied.'); },function(){ $('keyTxt').select(); say('keyMsg','Press and hold the key to copy it.'); }); }
+    catch(e){ $('keyTxt').select(); say('keyMsg','Press and hold the key to copy it.'); }
+  });
+
+  // ---------- Lock the tool ----------
+  var app=null, stamp='', lockText='', lockUrl=null;
+  $('file').addEventListener('change',function(){
+    app=null; $('fileInfo').textContent=''; $('lockOut').hidden=true; $('lockNext').hidden=true;
+    var f=this.files&&this.files[0]; if(!f) return;
+    f.text().then(function(txt){
+      var doc=new DOMParser().parseFromString(txt,'text/html');
+      if(txt.indexOf('HDT.CASES')<0||!doc.getElementById('view')){ $('fileInfo').textContent='✗ This is not the unlocked HDT all-cases file.'; $('fileInfo').className='msg bad'; return; }
+      var css=[].map.call(doc.querySelectorAll('head style'),function(s){return s.textContent;}).join('\n');
+      var js=[].map.call(doc.querySelectorAll('script'),function(s){return s.textContent;}).join('\n;\n');
+      [].forEach.call(doc.body.querySelectorAll('script'),function(s){ s.remove(); });
+      var nj=doc.getElementById('noJs'); if(nj) nj.remove();
+      var st=doc.getElementById('stamp'); stamp=st?st.textContent.replace(/^Last updated\s*/,''):'';
+      app={html:'<style>'+css+'</style>'+doc.body.innerHTML,js:js};
+      $('fileInfo').className='ok'; $('fileInfo').textContent='✓ HDT tool found · '+(stamp||'version not shown');
+    },function(){ $('fileInfo').textContent='✗ Could not read the file.'; });
+  });
+  $('go').addEventListener('click',function(){
+    if(!app){ say('lockMsg','Pick the unlocked tool file first.',true); return; }
+    $('go').disabled=true; say('lockMsg','Locking…');
+    var iv=crypto.getRandomValues(new Uint8Array(12));
+    crypto.subtle.encrypt({name:'AES-GCM',iv:iv},contentKey,enc.encode(JSON.stringify(app))).then(function(ct){
+      var w=new Uint8Array(12+ct.byteLength); w.set(iv); w.set(new Uint8Array(ct),12);
+      lockText=fill(WRAP,{BLOB:b64u(w),STAMP:stamp.replace(/[<>&]/g,''),PUB:JSON.stringify(VAULT.pub)});
+      if(lockUrl) URL.revokeObjectURL(lockUrl); lockUrl=URL.createObjectURL(new Blob([lockText],{type:'text/html'}));
+      $('dl').href=lockUrl; $('lockOut').hidden=false; $('lockNext').hidden=false; $('go').disabled=false;
+      say('lockMsg','✓ Locked file ready'+(stamp?' ('+stamp+')':'')+'. Download it, then upload to GitHub.');
+    }).catch(function(){ $('go').disabled=false; say('lockMsg','Could not lock the file. Try again in Chrome.',true); });
+  });
+  $('share').addEventListener('click',function(){ shareFile(lockText,'hdt.html','lockMsg'); });
 })();
-</script>
-</body></html>
+</script></body></html>
